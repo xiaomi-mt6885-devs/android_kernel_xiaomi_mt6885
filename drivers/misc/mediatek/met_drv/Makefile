@@ -18,7 +18,7 @@ CONFIG_KERVER_VERSION := $(VERSION).$(PATCHLEVEL)
 ifeq ($(CONFIG_MTK_MET_BUILT_IN),y)
 ccflags-y += -DMTK_MET_BUILT_IN
 MTK_PLATFORM := $(subst ",,$(CONFIG_MTK_PLATFORM))
-MET_ROOT_DIR := $(srctree)/../vendor/mediatek/kernel_modules/met_drv/$(CONFIG_KERVER_VERSION)
+MET_ROOT_DIR := $(srctree)/drivers/misc/mediatek/met_drv/$(CONFIG_KERVER_VERSION)
 MET_COMMON_DIR := $(wildcard $(MET_ROOT_DIR)/common)
 MET_PLF_DIR := $(wildcard $(MET_ROOT_DIR)/$(MTK_PLATFORM))
 
