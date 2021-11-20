@@ -3,6 +3,7 @@
  * fs/f2fs/file.c
  *
  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+ * Copyright (C) 2021 XiaoMi, Inc.
  *             http://www.samsung.com/
  */
 #include <linux/fs.h>
@@ -20,6 +21,10 @@
 #include <linux/uio.h>
 #include <linux/uuid.h>
 #include <linux/file.h>
+
+#if defined(CONFIG_UFSTW)
+#include <linux/ufstw.h>
+#endif
 
 #include "f2fs.h"
 #include "node.h"
@@ -163,6 +168,9 @@ static const struct vm_operations_struct f2fs_file_vm_ops = {
 	.fault		= f2fs_filemap_fault,
 	.map_pages	= filemap_map_pages,
 	.page_mkwrite	= f2fs_vm_page_mkwrite,
+#ifdef CONFIG_SPECULATIVE_PAGE_FAULT
+	.suitable_for_spf = true,
+#endif
 };
 
 static int get_parent_ino(struct inode *inode, nid_t *pino)
@@ -254,6 +262,10 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
 	};
 	unsigned int seq_id = 0;
 
+#if defined(CONFIG_UFSTW)
+	bool turbo_set = false;
+#endif
+
 	if (unlikely(f2fs_readonly(inode->i_sb) ||
 				is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
 		return 0;
@@ -326,6 +338,10 @@ go_write:
 		clear_inode_flag(inode, FI_UPDATE_WRITE);
 		goto out;
 	}
+#if defined(CONFIG_UFSTW)
+	bdev_set_turbo_write(sbi->sb->s_bdev);
+	turbo_set = true;
+#endif
 sync_nodes:
 	atomic_inc(&sbi->wb_sync_req[NODE]);
 	ret = f2fs_fsync_node_pages(sbi, inode, &wbc, atomic, &seq_id);
@@ -372,6 +388,10 @@ flush_out:
 	}
 	f2fs_update_time(sbi, REQ_TIME);
 out:
+#if defined(CONFIG_UFSTW)
+	if (turbo_set)
+		bdev_clear_turbo_write(sbi->sb->s_bdev);
+#endif
 	trace_f2fs_sync_file_exit(inode, cp_reason, datasync, ret);
 	f2fs_trace_ios(NULL, 1);
 	trace_android_fs_fsync_end(inode, start, end - start);

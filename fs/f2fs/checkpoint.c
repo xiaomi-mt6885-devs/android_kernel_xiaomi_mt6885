@@ -3,6 +3,7 @@
  * fs/f2fs/checkpoint.c
  *
  * Copyright (c) 2012 Samsung Electronics Co., Ltd.
+ * Copyright (C) 2021 XiaoMi, Inc.
  *             http://www.samsung.com/
  */
 #include <linux/fs.h>
@@ -13,6 +14,10 @@
 #include <linux/f2fs_fs.h>
 #include <linux/pagevec.h>
 #include <linux/swap.h>
+
+#if defined(CONFIG_UFSTW)
+#include <linux/ufstw.h>
+#endif
 
 #include "f2fs.h"
 #include "node.h"
@@ -1564,6 +1569,9 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
 	}
 	if (cpc->reason != CP_RESIZE)
 		mutex_lock(&sbi->cp_mutex);
+#if defined(CONFIG_UFSTW)
+	bdev_set_turbo_write(sbi->sb->s_bdev);
+#endif
 
 	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
 		((cpc->reason & CP_FASTBOOT) || (cpc->reason & CP_SYNC) ||
@@ -1632,6 +1640,9 @@ stop:
 	f2fs_update_time(sbi, CP_TIME);
 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish checkpoint");
 out:
+#if defined(CONFIG_UFSTW)
+	bdev_clear_turbo_write(sbi->sb->s_bdev);
+#endif
 	if (cpc->reason != CP_RESIZE)
 		mutex_unlock(&sbi->cp_mutex);
 	return err;
