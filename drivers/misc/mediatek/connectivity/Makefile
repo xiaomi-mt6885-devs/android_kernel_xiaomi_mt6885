@@ -118,40 +118,40 @@ endif
         obj-y += wlan_drv_gen4m/
 
         # For BT built-in mode start @{
-        # ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6885"))
-        #     PATH_TO_BT_DRV       = connectivity/bt/mt66xx/connac2
-        #     export _MTK_BT_CHIP=MTK_CONSYS_MT6885
-        # else ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6893"))
-        #     PATH_TO_BT_DRV       = connectivity/bt/mt66xx/connac2
-        #     export _MTK_BT_CHIP=MTK_CONSYS_MT6893
-        # else
-        #     PATH_TO_BT_DRV       = connectivity/bt/mt66xx/legacy
-        # endif
-        # obj-y += ../$(PATH_TO_BT_DRV)/
+        ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6885"))
+            PATH_TO_BT_DRV       = connectivity/bt/mt66xx/connac2
+            export _MTK_BT_CHIP=MTK_CONSYS_MT6885
+        else ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6893"))
+            PATH_TO_BT_DRV       = connectivity/bt/mt66xx/connac2
+            export _MTK_BT_CHIP=MTK_CONSYS_MT6893
+        else
+            PATH_TO_BT_DRV       = connectivity/bt/mt66xx/legacy
+        endif
+        obj-y += ../$(PATH_TO_BT_DRV)/
         # @} For BT built-in mode end
 
 
         # For FM built-in mode start @{
         # for fmradio options
-        # ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6885" "CONSYS_6893"))
-        #     export CFG_BUILD_CONNAC2=true
-        # else
-        #     export CFG_BUILD_CONNAC2=false
-        # endif
-        # FM_6631_CHIPS := 6758 6759 6771 6775 6765 6761 3967 6797 6768 6785 8168
-        # FM_6635_CHIPS := 6779 6885 6873 6893
-        # ifneq ($(filter $(FM_6631_CHIPS), $(MTK_PLATFORM_ID)),)
-        #     FM_CHIP := mt6631
-        # else ifneq ($(filter $(FM_6635_CHIPS), $(MTK_PLATFORM_ID)),)
-        #     FM_CHIP := mt6635
-        # endif
-        # export CFG_FM_CHIP_ID=$(MTK_PLATFORM_ID)
-        # export CFG_FM_CHIP=$(FM_CHIP)
-        # obj-y += fmradio/
+        ifneq (,$(filter $(CONFIG_MTK_COMBO_CHIP), "CONSYS_6885" "CONSYS_6893"))
+            export CFG_BUILD_CONNAC2=true
+        else
+            export CFG_BUILD_CONNAC2=false
+        endif
+        FM_6631_CHIPS := 6758 6759 6771 6775 6765 6761 3967 6797 6768 6785 8168
+        FM_6635_CHIPS := 6779 6885 6873 6893
+        ifneq ($(filter $(FM_6631_CHIPS), $(MTK_PLATFORM_ID)),)
+            FM_CHIP := mt6631
+        else ifneq ($(filter $(FM_6635_CHIPS), $(MTK_PLATFORM_ID)),)
+            FM_CHIP := mt6635
+        endif
+        export CFG_FM_CHIP_ID=$(MTK_PLATFORM_ID)
+        export CFG_FM_CHIP=$(FM_CHIP)
+        obj-y += fmradio/
         # @} For FM built-in mode end
 
         # For GPS built-in mode start @{
-        # obj-y += gps/
+        obj-y += gps/
         # @} For GPS built-in mode end
 
     endif
