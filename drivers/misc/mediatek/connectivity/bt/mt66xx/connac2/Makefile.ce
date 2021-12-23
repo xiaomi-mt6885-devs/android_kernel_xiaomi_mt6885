@@ -29,7 +29,7 @@ ccflags-y += -I$(src)/include/ -I$(src)/
 
 $(MOD_NAME)-objs := $(CFILES:.c=.o)
 
-obj-m += $(MOD_NAME).o
+obj-y += $(MOD_NAME).o
 
 
 #VPATH = /opt/toolchains/gcc-linaro-aarch64-linux-gnu-4.9-2014.09_linux

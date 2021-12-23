@@ -160,10 +160,10 @@ ccflags-y += -I$(src)/../../../common/common_main/linux/include
 ccflags-y += -DMTK_WCN_WMT_STP_EXP_SYMBOL_ABSTRACT
 
 MODULE_NAME := wlan_drv_gen2
-#obj-$(CONFIG_MTK_COMBO_WIFI) += $(MODULE_NAME).o
+obj-$(CONFIG_MTK_COMBO_WIFI) += $(MODULE_NAME).o
 
 #if CONFIG_MTK_COMBO_WIFI=m ==> obj-m means ko module, not build in obj-y
-obj-m += $(MODULE_NAME).o
+# obj-m += $(MODULE_NAME).o
 
 # ---------------------------------------------------
 # Directory List

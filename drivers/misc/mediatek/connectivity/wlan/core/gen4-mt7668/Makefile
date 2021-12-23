@@ -176,7 +176,7 @@ endif
 #obj-y += $(MODULE_NAME).o
 #endif
 MODULE_NAME := wlan_drv_gen4_mt7668
-obj-m += $(MODULE_NAME).o
+obj-y += $(MODULE_NAME).o
 
 # ---------------------------------------------------
 # Directory List
@@ -313,7 +313,7 @@ ccflags-y += -I$(src)/prealloc/include
 MODULE_NAME_PREALLOC = $(MODULE_NAME)_prealloc
 PREALLOC_OBJS := prealloc/prealloc.o
 $(MODULE_NAME_PREALLOC)-objs += $(PREALLOC_OBJS)
-obj-m += $(MODULE_NAME_PREALLOC).o
+obj-y += $(MODULE_NAME_PREALLOC).o
 endif
 
 DRIVER_BUILD_DATE=$(shell date +%Y%m%d%H%M%S)

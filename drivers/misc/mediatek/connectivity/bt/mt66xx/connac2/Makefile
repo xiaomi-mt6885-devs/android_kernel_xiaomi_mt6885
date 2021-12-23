@@ -78,7 +78,7 @@ endif
 # Objects List
 # ---------------------------------------------------
 MODULE_NAME := bt_drv
-obj-m += $(MODULE_NAME).o
+obj-y += $(MODULE_NAME).o
 
 #PLAT_DIR  := plat/$(MTK_PLATFORM)
 
