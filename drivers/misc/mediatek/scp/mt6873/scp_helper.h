@@ -231,6 +231,7 @@ extern void scp_reset_awake_counts(void);
 extern void scp_awake_init(void);
 
 #if SCP_RECOVERY_SUPPORT
+void scp_wdt_reset(int cpu_id);
 extern unsigned int scp_reset_by_cmd;
 extern struct scp_region_info_st scp_region_info_copy;
 extern struct scp_region_info_st *scp_region_info;
