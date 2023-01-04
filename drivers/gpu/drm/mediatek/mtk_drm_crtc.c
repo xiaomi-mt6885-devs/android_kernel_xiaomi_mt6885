@@ -2526,7 +2526,7 @@ void mtk_crtc_pkt_create(struct cmdq_pkt **cmdq_handle, struct drm_crtc *crtc,
 	*cmdq_handle = cmdq_pkt_create(cl);
 	if (IS_ERR_OR_NULL(*cmdq_handle)) {
 		DDPPR_ERR("%s create handle fail, %x\n",
-				__func__, (unsigned int)*cmdq_handle);
+				__func__, *cmdq_handle);
 		return;
 	}
 
