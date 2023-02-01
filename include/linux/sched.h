@@ -783,7 +783,8 @@ struct task_struct {
 	int				wake_cpu;
 #endif
 	int				on_rq;
-#ifdef CONFIG_MTK_SCHED_BOOST
+/*#ifdef CONFIG_MTK_SCHED_BOOST*/
+#ifdef CONFIG_MTK_TASK_TURBO
 	int				cpu_prefer;
 #endif
 
