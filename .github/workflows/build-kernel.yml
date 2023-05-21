@@ -1,5 +1,7 @@
 name: Build Kernel
 on:
+  push:
+
   watch:
     types: [started]
 
@@ -51,7 +53,7 @@ jobs:
     - uses: actions/checkout@v3
     - name: Setup Configuration
       run: |
-        if [ $(cat .github/config.env | grep "USE_CONFIG" | head -n 1 | cut -d "=" -f 2) = true ];then
+        if [ $(cat .github/config.env | grep "USE_CONFIG" | head -n 1 | cut -d "=" -f 2) = true -o -z ${{ github.event.inputs.KERNEL_DEFCONFIG }} ];then
             echo "KERNEL_DEFCONFIG=$(cat .github/config.env | grep -w "KERNEL_DEFCONFIG" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
             echo "KERNEL_FILE=$(cat .github/config.env | grep -w "KERNEL_FILE" | head -n 1 | cut -d "=" -f 2)" >> $GITHUB_ENV
             echo "BUILD_EXTRA_COMMAND=$(cat .github/config.env | grep -w "EXTRA_BUILD_COMMAND" | head -n 1 | cut -d ":" -f 2)" >> $GITHUB_ENV
