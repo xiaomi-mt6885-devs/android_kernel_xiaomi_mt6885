@@ -34,7 +34,7 @@ on:
        MAKE_BOOT_IMAGE:
          description: 'Make boot image'
          required: false
-         default: 'false'
+         default: 'true'
          type: boolean
        SOURCE_BOOT_IMAGE:
          description: 'Your original boot image url'
