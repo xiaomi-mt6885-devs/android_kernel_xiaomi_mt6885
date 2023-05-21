@@ -3,6 +3,9 @@ on:
   watch:
     types: [started]
 
+  schedule:
+    - cron: '0 18 * * *'
+
   workflow_dispatch:
     inputs:
        KERNEL_DEFCONFIG:
