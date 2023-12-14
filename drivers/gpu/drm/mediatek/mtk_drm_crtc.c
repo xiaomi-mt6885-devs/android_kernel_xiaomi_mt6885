@@ -2516,8 +2516,6 @@ static void mtk_crtc_cmdq_timeout_cb(struct cmdq_cb_data data)
 
 	/* CMDQ driver would not trigger aee when timeout. */
 	DDPAEE("%s cmdq timeout, crtc id:%d\n", __func__, drm_crtc_index(crtc));
-	aee_kernel_exception_api(__FILE__, __LINE__, DB_OPT_DEFAULT|DB_OPT_MMPROFILE_BUFFER,
-		"[DRM]", "Cmdq Timeout");
 }
 
 void mtk_crtc_pkt_create(struct cmdq_pkt **cmdq_handle, struct drm_crtc *crtc,
