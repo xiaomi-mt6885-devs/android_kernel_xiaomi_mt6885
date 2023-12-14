@@ -201,7 +201,18 @@ u8 *fcache_getblk(struct super_block *sb, u64 sec)
 			return NULL;
 		}
 		move_to_mru(bp, &fsi->fcache.lru_list);
-		return bp->bh->b_data;
+
+		if (likely(bp->bh->b_data))
+			return bp->bh->b_data;
+
+		sdfat_msg(sb, KERN_ERR,
+			"%s: no b_data (flag:0x%02x, sect:%llu), %s",
+			__func__, bp->flag, sec, bp->flag ? "EIO" : ",retry");
+
+		if (bp->flag)
+			return NULL;
+
+		__fcache_ent_discard(sb, bp);
 	}
 
 	bp = __fcache_get(sb);
@@ -227,7 +238,14 @@ u8 *fcache_getblk(struct super_block *sb, u64 sec)
 		return NULL;
 	}
 
-	return bp->bh->b_data;
+	if (likely(bp->bh->b_data))
+		return bp->bh->b_data;
+
+	sdfat_msg(sb, KERN_ERR,
+		"%s: no b_data after read (flag:0x%02x, sect:%llu)",
+		__func__, bp->flag, sec);
+
+	return NULL;
 }
 
 static inline int __mark_delayed_dirty(struct super_block *sb, cache_ent_t *bp)
@@ -567,7 +585,17 @@ u8 *dcache_getblk(struct super_block *sb, u64 sec)
 		if (!(bp->flag & KEEPBIT))	// already in keep list
 			move_to_mru(bp, &fsi->dcache.lru_list);
 
-		return bp->bh->b_data;
+		if (likely(bp->bh->b_data))
+			return bp->bh->b_data;
+
+		sdfat_msg(sb, KERN_ERR,
+			"%s: no b_data (flag:0x%02x, sect:%llu), %s",
+			__func__, bp->flag, sec, bp->flag ? "EIO" : ",retry");
+
+		if (bp->flag)
+			return NULL;
+
+		__dcache_ent_discard(sb, bp);
 	}
 
 	bp = __dcache_get(sb);
@@ -584,8 +612,14 @@ u8 *dcache_getblk(struct super_block *sb, u64 sec)
 		return NULL;
 	}
 
-	return bp->bh->b_data;
+	if (likely(bp->bh->b_data))
+		return bp->bh->b_data;
 
+	sdfat_msg(sb, KERN_ERR,
+		"%s: no b_data after read (flag:0x%02x, sect:%llu)",
+		__func__, bp->flag, sec);
+
+	return NULL;
 }
 
 s32 dcache_modify(struct super_block *sb, u64 sec)
@@ -676,7 +710,9 @@ s32 dcache_release_all(struct super_block *sb)
 	s32 ret = 0;
 	cache_ent_t *bp;
 	FS_INFO_T *fsi = &(SDFAT_SB(sb)->fsi);
+#ifdef CONFIG_SDFAT_DELAYED_META_DIRTY
 	s32 dirtycnt = 0;
+#endif
 
 	/* Connect list elements:
 	 * LRU list : (A - B - ... - bp_front) + (bp_first + ... + bp_last)
@@ -706,7 +742,9 @@ s32 dcache_release_all(struct super_block *sb)
 		bp = bp->next;
 	}
 
+#ifdef CONFIG_SDFAT_DELAYED_META_DIRTY
 	DMSG("BD:Release / dirty buf cache: %d (err:%d)", dirtycnt, ret);
+#endif
 	return ret;
 }
 
