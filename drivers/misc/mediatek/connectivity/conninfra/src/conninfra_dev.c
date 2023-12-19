@@ -450,7 +450,7 @@ static int conninfra_dev_pmic_event_cb(unsigned int id, unsigned int event)
 }
 
 /************************************************************************/
-static int conninfra_dev_do_drv_init()
+static int conninfra_dev_do_drv_init(void)
 {
 	static int init_done = 0;
 	int iret = 0;
