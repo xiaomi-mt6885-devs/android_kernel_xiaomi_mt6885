@@ -1992,6 +1992,7 @@ static void mtk_output_dsi_enable(struct mtk_dsi *dsi,
 	struct drm_crtc *crtc = dsi->encoder.crtc;
 	struct mtk_crtc_state *mtk_state = to_mtk_crtc_state(crtc->state);
 	unsigned int mode_id = mtk_state->prop_val[CRTC_PROP_DISP_MODE_IDX];
+	int blank;
 
 	DDPINFO("%s +\n", __func__);
 
@@ -2121,6 +2122,10 @@ static void mtk_output_dsi_enable(struct mtk_dsi *dsi,
 
 	dsi->output_en = true;
 	dsi->doze_enabled = new_doze_state;
+	// notify not tp module
+	blank = DRM_BLANK_UNBLANK;
+	g_notify_data.data = &blank;
+	drm_notifier_call_chain(DRM_EVENT_BLANK, &g_notify_data);
 
 	return;
 err_dsi_power_off:
@@ -2173,6 +2178,9 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi,
 {
 	bool new_doze_state = mtk_dsi_doze_state(dsi);
 	struct mtk_drm_crtc *mtk_crtc = to_mtk_crtc(dsi->encoder.crtc);
+
+	int blank = DRM_BLANK_POWERDOWN;
+	g_notify_data.data = &blank;
 
 	DDPDSIINFO("%s+ doze_enabled:%d, dsi->doze_enabled = %d\n", __func__, new_doze_state, dsi->doze_enabled);
 	if (dsi->doze_state == DRM_BLANK_UNBLANK) {
@@ -2239,6 +2247,10 @@ static void mtk_output_dsi_disable(struct mtk_dsi *dsi,
 
 	dsi->output_en = false;
 	dsi->doze_enabled = new_doze_state;
+	
+	// notify not tp module
+	drm_notifier_call_chain(DRM_EVENT_BLANK, &g_notify_data);
+	
 	DDPDSIINFO("%s-\n", __func__);
 }
 
